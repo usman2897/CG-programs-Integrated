@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include<GL/glut.h>
+#include "ratio.h"
+#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
 //main
@@ -17,6 +19,7 @@ extern GLubyte cube_Indices[];
 GLfloat camera_theta[3]={0.0,0.0,0.0};
 GLint camera_axis=2;
 static GLdouble viewer[]={0.0,0.0,5.0};
+GLfloat cbv_screen[4]={-90.0,-35.0,-15.0,-70.0};
 
 void ccube_mouse(int btn, int state, int x, int y)
 {
@@ -43,20 +46,18 @@ void ccube_keys(unsigned char key, int x, int y)
 			glutKeyboardFunc(keyboard);
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			glOrtho(orthoCo[0],orthoCo[1],orthoCo[2],orthoCo[3],orthoCo[4],orthoCo[5]);
+			glOrtho(orthoCo[0],orthoCo[3],orthoCo[1],orthoCo[2],-1000.0,1000.0);
 		}
 		glutPostRedisplay();
 }
-void ccube_myReshape(int w, int h)
+void cbv_myReshape(int w, int h)
 {
 	glViewport(0,0,w,h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if(w<=h)
-   		glFrustum(-90.0,-70.0,-30.0+0.5*(GLfloat)h/(GLfloat)w,-10.0-0.5*(GLfloat)h/(GLfloat)w,-100.0,100.0);
-	else
-	   glFrustum(-90+0.5*(GLfloat)w/(GLfloat)h,-70.0-0.5*(GLfloat)w/(GLfloat)h,-30.0,-10.0,-100.0,100.0);
-	   glMatrixMode(GL_MODELVIEW);
+   	glFrustum(cbv_screen[0],cbv_screen[3],cbv_screen[1],cbv_screen[2],-1000.0,1000.0);
+	glMatrixMode(GL_MODELVIEW);
+	width=w;height=h;cal_ratio(orthoCo);
 }
 void ccube()
 {
@@ -70,7 +71,7 @@ void ccube()
 	glColor3f(0.2,0.2,0.2);
 	glPushMatrix();
 	glLoadIdentity();
-	polygon(-90.0,-35.0,-15.0,-70.0);
+	polygon(cbv_screen[0],cbv_screen[1],cbv_screen[2],cbv_screen[3]);
 	glPopMatrix();
 	glLoadIdentity();
 	glPushMatrix();
@@ -83,8 +84,9 @@ void ccube()
 	glRotatef(camera_theta[2],0.0,0.0,1.0);
 	glDrawElements(GL_QUADS,24,GL_UNSIGNED_BYTE,cube_Indices);
 	glPopMatrix();
-	glColor3f(0.0,0.0,1.0);
-	glRasterPos2f(-1.5,-3.5);
-	Write("ViewsOfCube",1);
 	glPopMatrix();
+	glLoadIdentity();
+	glColor3f(0.0,0.0,1.0);
+	glRasterPos2f(cbv_screen[0]+5,cbv_screen[1]-8);
+	Write("ViewsOfCube",1);
 }

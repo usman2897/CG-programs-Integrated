@@ -1,10 +1,19 @@
 #include<GL/glut.h>
 #include<stdio.h>
+#include "ratio.h"
+#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
-void teapot_myReshape(int w,int h)
+GLfloat tp_screen[4]={-60.0,70.0,90.0,-40.0};
+
+void tp_myReshape(int w,int h)
 {
-	
+	glViewport(0,0,w,h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+    glOrtho(tp_screen[0],tp_screen[3],tp_screen[1],tp_screen[2],-100.0,100.0);
+    glMatrixMode(GL_MODELVIEW);
+    width=w;height=h;cal_ratio(orthoCo);
 }
 void wall(double thickness)
 {
@@ -54,26 +63,39 @@ void teapot(void)
 	glEnable(GL_SHADE_MODEL);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_NORMALIZE);
-	GLfloat mat_ambient[]={0.7f,0.7f,0.7f,1.0f};
-   	 GLfloat mat_diffuse[]={0.5f,0.5f,0.5f,1.0f};
-    	GLfloat mat_specular[]={1.0f,1.0f,1.0f,1.0f};
-    	GLfloat mat_shininess[]={50.0f};
+	//GLfloat mat_ambient[]={0.7f,0.7f,0.7f,1.0f};
+   	// GLfloat mat_diffuse[]={0.0f,0.5f,0.5f,1.0f};
+    //	GLfloat mat_specular[]={0.0f,1.0f,1.0f,1.0f};
+    //	GLfloat mat_shininess[]={100.0f};
 
+ GLfloat lightamb[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
+ GLfloat lightint[]  = { 1.0f, 1.0f, 1.0f, 1.0f };        /*Variables used for lighting and shading effects*/
+ GLfloat lightspec[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+ GLfloat lightpos[] = { 2.0f, 5.0f, 5.0f, 0.0f };
+
+ GLfloat mat_ambient[]    = { 0.7f, 0.7f, 0.7f, 1.0f };
+ GLfloat mat_diffuse[]    = { 0.8f, 0.8f, 0.8f, 1.0f };
+ GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
+ GLfloat mat_shininess[] = { 100.0f };
 	glMaterialfv(GL_FRONT,GL_AMBIENT,mat_ambient);
 	glMaterialfv(GL_FRONT,GL_DIFFUSE,mat_diffuse);
 	glMaterialfv(GL_FRONT,GL_SPECULAR,mat_specular);
 	glMaterialfv(GL_FRONT,GL_SHININESS,mat_shininess);
 
-	GLfloat lightint[]={1.0f,1.0f,1.0f,1.0f};
-	GLfloat lightpos[]={320.0f,240.0f,3.0f,0.0f};
+	//GLfloat lightint[]={1.0f,1.0f,1.0f,1.0f};
+	//GLfloat lightpos[]={320.0f,240.0f,3.0f,0.0f};
+	//GLfloat lightamb[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
+	//GLfloat lightspec[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	glLightfv(GL_LIGHT0,GL_POSITION,lightpos);
 	glLightfv(GL_LIGHT0,GL_DIFFUSE,lightint);
-	glColor3f(0.0,0.0,0.0);
+	glLightfv(GL_LIGHT0, GL_AMBIENT,  lightamb);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, lightspec);
+	glColor3f(0.0,1.0,0.0);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	polygon(-60.0,70.0,90.0,-40.0);
+	polygon(tp_screen[0],tp_screen[1],tp_screen[2],tp_screen[3]);
 	glPopMatrix();
 	glPushMatrix();
 	glLoadIdentity();
@@ -106,6 +128,6 @@ void teapot(void)
 	glDisable(GL_SHADE_MODEL);
 	glDisable(GL_NORMALIZE);
 	glColor3f(0.0,0.0,1.0);
-	glRasterPos2f(-55,63);
+	glRasterPos2f(tp_screen[0]+7,tp_screen[1]-8);
 	Write("TeaPot",1);
 }

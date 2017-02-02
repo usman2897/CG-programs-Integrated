@@ -2,43 +2,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#define true 1
-#define false 0
-#define outcode int
+#include "main.h"
 
-void myReshape(int,int);
-outcode ComputeOutCode (double x, double y);
-void keyboard(unsigned char c,int x,int y);
-void mouse(int button,int status,int x,int y);
-
-
-//tetrahedron
-void tetrahedron(int );
-void  tet_myReshape(int w,int h);
-
-//cube_data
-void cube_mouse(int btn,int state,int x,int y);
-void cube_spin();
-void cube_myReshape(int w,int h);
-void cube(void);
-
-//tetrahedron
-extern int tet_n;
-
-//house
-extern GLfloat house_theta;
-
-//liangBarsky
-//CohenSutherland
-//Cylinder_Parallelopiped
-//mesh_data
-//Viewing a cube
-void ccube_mouse(int btn, int state, int x, int y);
-void ccube_keys(unsigned char key, int x, int y);
-void ccube_myReshape(int w, int h);
-void ccube();
 int count=0;
-GLfloat orthoCo[6]={-100.0,100.0,-100.0,100.0,-100.0,100.0};
+GLfloat orthoCo[4]={-100.0,-100.0,100.0,60.0};
+int width=800,height=600;
+float xratio;
+float yratio;
+
+void cal_ratio(GLfloat y[])
+{
+	xratio=width/(y[3]-y[0]);
+	yratio=height/(y[2]-y[1]);
+}
 void Write(char *string,int size)
 {
 	if(size==1)
@@ -55,10 +31,10 @@ void Write(char *string,int size)
 }
 void myinit()
 {
-	glClearColor(1.0,1.0,1.0,1.0);
+	glClearColor(1.0,0.7,0.5,1.0);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(orthoCo[0],orthoCo[1],orthoCo[2],orthoCo[3],orthoCo[4],orthoCo[5]);
+	glOrtho(orthoCo[0],orthoCo[3],orthoCo[1],orthoCo[2],-100.0,100.0);
 }
 void polygon(GLfloat a,GLfloat b,GLfloat c,GLfloat d)
 {
@@ -70,20 +46,12 @@ void polygon(GLfloat a,GLfloat b,GLfloat c,GLfloat d)
 	glEnd();
 }
 
-//cube
-//teapot
-//tetrahedron
-//house
-//LiangBarsky
-//CYlinder & Parallelopiped
-//mesh
-//scanfill
-//viewing a cube
 
 void display()
 {
 	if(count==0){
 		myinit();count++;
+		cal_ratio(orthoCo);
 	}
 	cube();
 	teapot();
@@ -95,111 +63,123 @@ void display()
 	mesh();
 	polyfill();
 	ccube();
+	createIcon();
 	glColor3f(0.0,0.0,1.0);
-	glRasterPos2f(-10,-40);
+	glRasterPos2f(-40,-40);
 	Write("BY",2);
-	glRasterPos2f(0,-50);
+	glRasterPos2f(-20,-50);
 	Write("MOHAMMED USMAN",2);
-	glRasterPos2f(0,-60);
+	glRasterPos2f(-20,-60);
 	Write("14GAEC9025",2);
-	glRasterPos2f(0,-70);
+	glRasterPos2f(-20,-70);
 	Write("5th Sem CSE",2);
-	glRasterPos2f(0,-80);
-	Write("Under the Guidance of Vimala Mam",2);
+	glRasterPos2f(-20,-80);
+	Write("Under the Guidance of VIMALA Mam",2);
+	count++;
+	if(count>30000)count=1;
 	glFlush();
 	glutSwapBuffers();
 }
 
-
+void animation(float screen[])
+{
+	int i,j,k,l; i=orthoCo[0]-screen[0];j=orthoCo[3]-screen[3];k=orthoCo[1]-screen[1];l=orthoCo[2]-screen[2];
+	float inci=(float)i/(float)10,incj=(float)j/(float)10,inck=(float)k/(float)10,incl=(float)l/(float)10,inc;
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	for(inc=0;inc<=10;inc++)
+	{
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(orthoCo[0]-inci*inc,orthoCo[3]-incj*inc,orthoCo[1]-inck*inc,orthoCo[2]-incl*inc,-100.0,100.0);
+		display();
+	}
+}
 void mouse(int button,int status,int x,int y)
 {
-	if(button==GLUT_LEFT_BUTTON&&(x>=40&&x<=120)&&(y>=30&&y<=90))
+	y=height-y;
+	if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(cube_screen[0]-orthoCo[0])&&x<=xratio*(cube_screen[3]-orthoCo[0]))&&(y>=yratio*(cube_screen[1]-orthoCo[1])&&y<=yratio*(cube_screen[2]-orthoCo[1])))
 	{
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-90.0,-70.0,70.0,90.0,-100.0,100.0);
+		animation(cube_screen);
 		glutMouseFunc(cube_mouse);
 		glutReshapeFunc(cube_myReshape);
-		//printf("%d %d\n",x,y);
 	}
-	else if(button==GLUT_LEFT_BUTTON&&(x>=160&&x<=240)&&(y>=30&&y<=90))
+	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(tp_screen[0]-orthoCo[0])&&x<=xratio*(tp_screen[3]-orthoCo[0]))&&(y>=yratio*(tp_screen[1]-orthoCo[1])&&y<=yratio*(tp_screen[2]-orthoCo[1])))
 	{
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-60.0,-40.0,70.0,90.0,-100.0,100.0);
+		animation(tp_screen);
+		glutMouseFunc(0);
+		glutReshapeFunc(tp_myReshape);
+	}
+	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(tet_screen[0]-orthoCo[0])&&x<=xratio*(tet_screen[3]-orthoCo[0]))&&(y>=yratio*(tet_screen[1]-orthoCo[1])&&y<=yratio*(tet_screen[2]-orthoCo[1])))
+	{
+		animation(tet_screen);
 		glutMouseFunc(0);
 		glutReshapeFunc(tet_myReshape);
-		//printf("%d %d\n",x,y);
-	}
-	else if(button==GLUT_LEFT_BUTTON&&(x>=280&&x<=360)&&(y>=30&&y<=90))
-	{
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-30.0,-10.0,70.0,90.0,-100.0,100.0);
-		glutMouseFunc(0);
+		printf("Enter the No. of Recursions ofr Tetrahedron: ");
 		scanf("%d",&tet_n);
 	}
-	else if(button==GLUT_LEFT_BUTTON&&(x>=40&&x<=120)&&(y>=135&&y<=195))
+	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(house_screen[0]-orthoCo[0])&&x<=xratio*(house_screen[3]-orthoCo[0]))&&(y>=yratio*(house_screen[1]-orthoCo[1])&&y<=yratio*(house_screen[2]-orthoCo[1])))
 	{
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-90.0,-70.0,35.0,55.0,-100.0,100.0);
+		animation(house_screen);
 		glutMouseFunc(0);
-		//printf("%d %d\n",x,y);
+		glutReshapeFunc(house_myReshape);
+		printf("Enter the angle to rotate the house by: ");
 		scanf("%f",&house_theta);
 		house_theta=house_theta*3.14/180;
 	}
-	else if(button==GLUT_LEFT_BUTTON&&(x>=160&&x<=240)&&(y>=135&&y<=195))
+	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(lb_screen[0]-orthoCo[0])&&x<=xratio*(lb_screen[3]-orthoCo[0]))&&(y>=yratio*(lb_screen[1]-orthoCo[1])&&y<=yratio*(lb_screen[2]-orthoCo[1])))
 	{
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-60.0,-40.0,35.0,55.0,-100.0,100.0);
+		animation(lb_screen);
+		glutReshapeFunc(lb_myReshape);
 		glutMouseFunc(0);
-		//printf("%d %d\n",x,y);
 	}
-	else if(button==GLUT_LEFT_BUTTON&&(x>=280&&x<=360)&&(y>=135&&y<=195))
+	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(cohen_screen[0]-orthoCo[0])&&x<=xratio*(cohen_screen[3]-orthoCo[0]))&&(y>=yratio*(cohen_screen[1]-orthoCo[1])&&y<=yratio*(cohen_screen[2]-orthoCo[1])))
 	{
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-30.0,-10.0,35.0,55.0,-100.0,100.0);
+		animation(cohen_screen);
+		glutReshapeFunc(cohen_myReshape);
 		glutMouseFunc(0);
-		//printf("%d %d\n",x,y);
 	}
-	else if(button==GLUT_LEFT_BUTTON&&(x>=40&&x<=120)&&(y>=240&&y<=300))
+	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(parcyl_screen[0]-orthoCo[0])&&x<=xratio*(parcyl_screen[3]-orthoCo[0]))&&(y>=yratio*(parcyl_screen[1]-orthoCo[1])&&y<=yratio*(parcyl_screen[2]-orthoCo[1])))
 	{
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-90.0,-70.0,0.0,20.0,-100.0,100.0);
+		animation(parcyl_screen);
+		glutReshapeFunc(parcyl_myReshape);
 		glutMouseFunc(0);
-		//printf("%d %d\n",x,y);
-		//printf("Enter the No. of Circles and Squares in Cylinder and Parallelopiped:");
-		//scanf("%d%d",&cyl_n,&par_n);
 	}
-	else if(button==GLUT_LEFT_BUTTON&&(x>=160&&x<=240)&&(y>=240&&y<=300))
+	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(mesh_screen[0]-orthoCo[0])&&x<=xratio*(mesh_screen[3]-orthoCo[0]))&&(y>=yratio*(mesh_screen[1]-orthoCo[1])&&y<=yratio*(mesh_screen[2]-orthoCo[1])))
 	{
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-60.0,-40.0,0.0,20.0,-100.0,100.0);
+		animation(mesh_screen);
+		glutReshapeFunc(mesh_myReshape);
 		glutMouseFunc(0);
-		//printf("%d %d\n",x,y);
 	}
-	else if(button==GLUT_LEFT_BUTTON&&(x>=280&&x<=360)&&(y>=240&&y<=300))
+	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(sf_screen[0]-orthoCo[0])&&x<=xratio*(sf_screen[3]-orthoCo[0]))&&(y>=yratio*(sf_screen[1]-orthoCo[1])&&y<=yratio*(sf_screen[2]-orthoCo[1])))
 	{
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-30.0,-10.0,0.0,20.0,-100.0,100.0);
+		animation(sf_screen);
+		glutReshapeFunc(sf_myReshape);
 		glutMouseFunc(0);
-		//printf("%d %d\n",x,y);
 	}
-	else if(button==GLUT_LEFT_BUTTON&&(x>=40&&x<=120)&&(y>=345&&y<=405))
+	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(cbv_screen[0]-orthoCo[0])&&x<=xratio*(cbv_screen[3]-orthoCo[0]))&&(y>=yratio*(cbv_screen[1]-orthoCo[1])&&y<=yratio*(cbv_screen[2]-orthoCo[1])))
 	{
+		//animation(cbv_screen);
 		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-90.0,-70.0,-35.0,-15.0,-100.0,100.0);
+		//glLoadIdentity();
+		glFrustum(cbv_screen[0],cbv_screen[3],cbv_screen[1],cbv_screen[2],-100.0,100.0);
 		glutMouseFunc(ccube_mouse);
-		glutReshapeFunc(ccube_myReshape);
+		glutReshapeFunc(cbv_myReshape);
 		glutKeyboardFunc(ccube_keys);
-		printf("%d %d\n",x,y);
+	}
+	else if(button==GLUT_LEFT_BUTTON&&(x/xratio+orthoCo[0]>=8.4&&x/xratio+orthoCo[0]<=45&&y/yratio+orthoCo[1]>=30.0&&y/yratio+orthoCo[1]<=61.33))
+	{
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective (60, (GLfloat)width / (GLfloat)height, 10, 100.0);
+		glMatrixMode(GL_MODELVIEW);
+		glutDisplayFunc(avl_display);
+		glutKeyboardFunc(avl_keyboard);
+		glutReshapeFunc(avl_myReshape);
+		glutMouseFunc(0);
+		glutIdleFunc(0);
+		count=0;
+		glutPostRedisplay();
 	}
 }
 void keyboard(unsigned char c,int x,int y)
@@ -208,7 +188,7 @@ void keyboard(unsigned char c,int x,int y)
 	{
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(orthoCo[0],orthoCo[1],orthoCo[2],orthoCo[3],orthoCo[4],orthoCo[5]);
+		glOrtho(orthoCo[0],orthoCo[3],orthoCo[1],orthoCo[2],-100.0,100.0);
 		glutMouseFunc(mouse);
 		glutReshapeFunc(myReshape);
 	}
@@ -219,11 +199,9 @@ void myReshape(int w,int h)
 	glViewport(0,0,w,h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if(w<=h)
-	     glOrtho(-100.0,20.0,-20.0*(GLfloat)h/(GLfloat)w,100.0*(GLfloat)h/(GLfloat)w,-100.0,100.0);
-           else
-	    glOrtho(-100.0*(GLfloat)w/(GLfloat)h,20.0*(GLfloat)w/(GLfloat)h,-20.0,100.0,-100.0,100.0);
-	    glMatrixMode(GL_MODELVIEW);
+    glOrtho(orthoCo[0],orthoCo[3],orthoCo[1],orthoCo[2],-100.0,100.0);
+    glMatrixMode(GL_MODELVIEW);
+    width=w;height=h;cal_ratio(orthoCo);
 }
 void idle()
 {
@@ -234,7 +212,7 @@ int main(int argc,char **argv)
 		glutInit(&argc,argv);
 		glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);
 		glutInitWindowPosition(10,20);
-		glutInitWindowSize(800,600);
+		glutInitWindowSize(width,height);
 		glutCreateWindow("Computer Graphics Project!");
 		glutReshapeFunc(myReshape);
 		glutDisplayFunc(display);
@@ -243,6 +221,5 @@ int main(int argc,char **argv)
         glutKeyboardFunc(keyboard);
 		glEnable(GL_DEPTH_TEST);
 		glColor3f(1.0,1.0,1.0);
-		//myinit();
 		glutMainLoop();
 }

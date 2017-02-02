@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include<GL/glut.h>
+#include "ratio.h"
+#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
 typedef   float  tet_point[3];
@@ -9,18 +11,16 @@ tet_point tet_v[]={ {0.0,0.0,1.0},
       {-0.816,-0.471,-0.33},
       {0.816,-0.471,0.33}};
 int tet_n=3;
+GLfloat tet_screen[4]={-30.0,70.0,90.0,-10.0};
 
 void  tet_myReshape(int w,int h)
 {
 	glViewport(0,0,w,h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if(w<=h)
-		glOrtho(-2.0,2.0,-2.0*(GLfloat)h/(GLfloat)w,2.0*(GLfloat)h/(GLfloat)w,-10.0,10.0);
-	else
-
-         glOrtho(-2.0*(GLfloat)w/(GLfloat)h,2.0*(GLfloat)w/(GLfloat)h,-2.0,2.0,-10.0,10.0);
+	glOrtho(tet_screen[0],tet_screen[3],tet_screen[1],tet_screen[2],-100.0,100.0);
 	glMatrixMode(GL_MODELVIEW);
+	width=w;height=h;cal_ratio(orthoCo);
 	glutPostRedisplay();
 }
 void tet_triangle(tet_point a,tet_point b,tet_point c)
@@ -61,7 +61,7 @@ void tetrahedron(int m)
 	glPushMatrix();
 	glColor3f(0.2,0.2,0.2);
 	glLoadIdentity();
-	polygon(-30.0,70.0,90.0,-10.0);
+	polygon(tet_screen[0],tet_screen[1],tet_screen[2],tet_screen[3]);
 	glPopMatrix();
 	glPushMatrix();
 	glLoadIdentity();
@@ -77,6 +77,6 @@ void tetrahedron(int m)
 	tet_divide_tri(tet_v[0],tet_v[2],tet_v[3],m);
 	glPopMatrix();
 	glColor3f(0.0,0.0,1.0);
-	glRasterPos2f(-31,63);
+	glRasterPos2f(tet_screen[0]+5,tet_screen[1]-8);
 	Write("Tetrahedron",1);
 }

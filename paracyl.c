@@ -1,9 +1,12 @@
 #include<stdio.h>
 #include<GL/glut.h>
 #include<math.h>
+#include "ratio.h"
+#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
 int cyl_n=50,par_n=40;
+GLfloat parcyl_screen[4]={-90,0,20,-70};
 
 void draw_pixel(GLint cx,GLint cy)
 {
@@ -45,6 +48,15 @@ void cylinder_draw()
 	for(i=0;i<cyl_n;i+=3)
 	      circle_draw(xc,yc+i,r);
 }
+void parcyl_myReshape(int w,int h)
+{
+	glViewport(0,0,w,h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+    glOrtho(parcyl_screen[0],parcyl_screen[3],parcyl_screen[1],parcyl_screen[2],-100.0,100.0);
+    glMatrixMode(GL_MODELVIEW);
+    width=w;height=h;cal_ratio(orthoCo);
+}
 void parallelopiped(int x1,int x2,int y1,int y2,int y3,int y4)
 {
 	glColor3f(0.0,0.0,1.0);
@@ -69,7 +81,7 @@ void cylPara()
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	  glLoadIdentity();
-  	  polygon(-90,0,20,-70);
+  	  polygon(parcyl_screen[0],parcyl_screen[1],parcyl_screen[2],parcyl_screen[3]);
 	glPopMatrix();
 	glPushMatrix();
 	  glLoadIdentity();
@@ -78,8 +90,10 @@ void cylPara()
 	  glPointSize(2.0);
 	  cylinder_draw();
 	  parallelopiped_draw();
-	  glColor3f(0.0,0.0,1.0);
-	  glRasterPos2f(-50,-200);
-	  Write("CylinderParallelopiped",1);
 	glPopMatrix();
+	glLoadIdentity();
+	  glColor3f(0.0,0.0,1.0);
+	  glRasterPos2f(parcyl_screen[0]+1,parcyl_screen[1]-8);
+	  Write("CylinderParallelopiped",1);
+	
 }

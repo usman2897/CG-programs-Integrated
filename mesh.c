@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include<GL/glut.h>
+#include "ratio.h"
+#include "main.h"
 #define   mesh_maxx 20
 #define   mesh_maxy 25
 #define   mesh_dx 15
@@ -8,7 +10,17 @@ void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
 GLfloat mesh_x[mesh_maxx]={0.0},mesh_y[mesh_maxy]={0.0};
 GLfloat mesh_x0=50.0,mesh_y0=50.0;
+GLfloat mesh_screen[4]={-60,0,20,-40};
 
+void mesh_myReshape(int w,int h)
+{
+	glViewport(0,0,w,h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+    glOrtho(mesh_screen[0],mesh_screen[3],mesh_screen[1],mesh_screen[2],-100.0,100.0);
+    glMatrixMode(GL_MODELVIEW);
+    width=w;height=h;cal_ratio(orthoCo);
+}
 void mesh()
 {
 	int i,j;
@@ -16,7 +28,7 @@ void mesh()
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	  glLoadIdentity();
-  	  polygon(-60,0,20,-40);
+  	  polygon(mesh_screen[0],mesh_screen[1],mesh_screen[2],mesh_screen[3]);
 	glPopMatrix();
 	glColor3f(1.0,1.0,0.0);
 	glPushMatrix();
@@ -38,8 +50,9 @@ void mesh()
         		glEnd();
         		glFlush();
 		}
+	glPopMatrix();
+	glLoadIdentity();
 	glColor3f(0.0,0.0,1.0);
-	glRasterPos2f(130,-150);
+	glRasterPos2f(mesh_screen[0]+8,mesh_screen[1]-8);
 	Write("Mesh",1);
- 	glPopMatrix();
 }

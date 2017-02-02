@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<GL/glut.h>
 #include<math.h>
+#include "ratio.h"
+#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
 GLfloat house[3][9]={ {10.0,10.0,17.5,25.0,25.0,15.0,15.0,20.0,20.0},
@@ -11,6 +13,8 @@ GLfloat house_rot_mat[3][3]={{0},{0},{0}};
 GLfloat house_result[3][9]={{0},{0},{0}};
 GLfloat h=10.0;
 GLfloat k=10.0;
+GLfloat house_screen[4]={-90,35,55,-70};
+
 void multiply()
 {
 	int i,j,l;
@@ -21,6 +25,15 @@ void multiply()
 	       for(l=0;l<3;l++)
 				house_result[i][j]=house_result[i][j]+house_rot_mat[i][l]*house[l][j];
 	       }
+}
+void house_myReshape(int w,int h)
+{
+	glViewport(0,0,w,h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+    glOrtho(house_screen[0],house_screen[3],house_screen[1],house_screen[2],-100.0,100.0);
+    glMatrixMode(GL_MODELVIEW);
+    width=w;height=h;cal_ratio(orthoCo);
 }
 void rotate()
 {
@@ -89,7 +102,9 @@ void home()
 	glColor3f(0.2,0.2,0.2);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	polygon(-90,35,55,-70);
+	glPushMatrix();
+	polygon(house_screen[0],house_screen[1],house_screen[2],house_screen[3]);
+	glPopMatrix();
 	glLoadIdentity();
 	glScaled(0.3,0.3,0.0);
 	glTranslated(-275.0,139.0,0.0);
@@ -98,7 +113,8 @@ void home()
 	  rotate();
 	  drawrotatedhouse();
 	glPopMatrix();
+	glLoadIdentity();
 	glColor3f(0.0,0.0,1.0);
-	glRasterPos2f(-10,-43);
+	glRasterPos2f(house_screen[0]+4,house_screen[1]-8);
 	Write("Rotate House",1);
 }

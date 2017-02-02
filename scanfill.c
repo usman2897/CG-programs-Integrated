@@ -1,7 +1,9 @@
 #include<stdio.h>
 #include<GL/glut.h>
+#include "ratio.h"
+#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
-
+GLfloat sf_screen[4]={-30,0,20,-10};
 
 void edgedetect(float x1,float y1,float x2,float y2,int *le,int *re)
 {
@@ -55,6 +57,15 @@ void scanfill(float x1,float y1,float x2,float y2,float x3,float y3,float x4,flo
 	}
 
 }
+void sf_myReshape(int w,int h)
+{
+	glViewport(0,0,w,h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+    glOrtho(sf_screen[0],sf_screen[3],sf_screen[1],sf_screen[2],-100.0,100.0);
+    glMatrixMode(GL_MODELVIEW);
+    width=w;height=h;cal_ratio(orthoCo);
+}
 void polyfill()
 {
 	float x1,x2,x3,x4,y1,y2,y3,y4;
@@ -63,7 +74,7 @@ glColor3f(0.2,0.2,0.2);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	  glLoadIdentity();
-  	  polygon(-30,0,20,-10);
+  	  polygon(sf_screen[0],sf_screen[1],sf_screen[2],sf_screen[3]);
 	glPopMatrix();
 	glPushMatrix();
 	glLoadIdentity();
@@ -77,8 +88,9 @@ glColor3f(0.2,0.2,0.2);
   glVertex2f(x4,y4);
   glEnd();
   scanfill(x1,y1,x2,y2,x3,y3,x4,y4);
+  glPopMatrix();
+  glLoadIdentity();
   glColor3f(0.0,0.0,1.0);
-	glRasterPos2f(20,-45);
+	glRasterPos2f(sf_screen[0]+3,sf_screen[1]-8);
 	Write("ScanfillAlgorithm",1);
-	glPopMatrix();
 }

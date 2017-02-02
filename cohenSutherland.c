@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include<GL/glut.h>
+#include "ratio.h"
+#include "main.h"
 #define true 1
 #define false 0
 #define outcode int
@@ -14,6 +16,7 @@ const int RIGHT = 8;
 const int LEFT = 2;
 const int TOP = 4;
 const int BOTTOM = 1;
+GLfloat cohen_screen[4]={-30,35,55,-10};
 
 void CohenSutherlandLineClipAndDraw (double cohen_x0,double cohen_y0,double cohen_x1,double cohen_y1)
 {
@@ -118,13 +121,22 @@ outcode ComputeOutCode (double x, double y)
 		code |= LEFT;
 	return code;
 }
+void cohen_myReshape(int w,int h)
+{
+	glViewport(0,0,w,h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+    glOrtho(cohen_screen[0],cohen_screen[3],cohen_screen[1],cohen_screen[2],-100.0,100.0);
+    glMatrixMode(GL_MODELVIEW);
+    width=w;height=h;cal_ratio(orthoCo);
+}
 void cohenSutherland()
 {
 	glColor3f(0.2,0.2,0.2);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	  glLoadIdentity();
-  	  polygon(-30,35,55,-10);
+  	  polygon(cohen_screen[0],cohen_screen[1],cohen_screen[2],cohen_screen[3]);
 	glPopMatrix();
 	glPushMatrix();
 	  glLoadIdentity();
@@ -148,8 +160,9 @@ void cohenSutherland()
 	  glEnd();
 	  CohenSutherlandLineClipAndDraw(cohen_x0,cohen_y0,cohen_x1,cohen_y1);
 	  CohenSutherlandLineClipAndDraw(60,20,80,120);
+	  glPopMatrix();
+	  glLoadIdentity();
 	  glColor3f(0.0,0.0,1.0);
-	  glRasterPos2f(-50,-200);
+	  glRasterPos2f(cohen_screen[0]+2,cohen_screen[1]-8);
 	  Write("CohenSutherLand",1);
-	glPopMatrix();
 }
