@@ -1,3 +1,4 @@
+#include "main.h"
 extern int width,height;
 extern float xratio;
 extern float yratio;

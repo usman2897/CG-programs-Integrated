@@ -1,7 +1,6 @@
 #include<GL/glut.h>
 #include<stdio.h>
 #include "ratio.h"
-#include "main.h"
 void polygon(GLfloat a,GLfloat b,GLfloat c,GLfloat d);
 
 GLfloat    cube_vertices[ ]={ -1.0,-1.0,-1.0,

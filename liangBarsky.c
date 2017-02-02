@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include<GL/glut.h>
 #include "ratio.h"
-#include "main.h"
 #define true 1
 #define false 0
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);

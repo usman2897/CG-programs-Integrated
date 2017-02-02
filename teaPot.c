@@ -1,7 +1,6 @@
 #include<GL/glut.h>
 #include<stdio.h>
 #include "ratio.h"
-#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
 GLfloat tp_screen[4]={-60.0,70.0,90.0,-40.0};
@@ -63,11 +62,6 @@ void teapot(void)
 	glEnable(GL_SHADE_MODEL);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_NORMALIZE);
-	//GLfloat mat_ambient[]={0.7f,0.7f,0.7f,1.0f};
-   	// GLfloat mat_diffuse[]={0.0f,0.5f,0.5f,1.0f};
-    //	GLfloat mat_specular[]={0.0f,1.0f,1.0f,1.0f};
-    //	GLfloat mat_shininess[]={100.0f};
-
  GLfloat lightamb[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
  GLfloat lightint[]  = { 1.0f, 1.0f, 1.0f, 1.0f };        /*Variables used for lighting and shading effects*/
  GLfloat lightspec[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -81,12 +75,6 @@ void teapot(void)
 	glMaterialfv(GL_FRONT,GL_DIFFUSE,mat_diffuse);
 	glMaterialfv(GL_FRONT,GL_SPECULAR,mat_specular);
 	glMaterialfv(GL_FRONT,GL_SHININESS,mat_shininess);
-
-	//GLfloat lightint[]={1.0f,1.0f,1.0f,1.0f};
-	//GLfloat lightpos[]={320.0f,240.0f,3.0f,0.0f};
-	//GLfloat lightamb[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
-	//GLfloat lightspec[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
 	glLightfv(GL_LIGHT0,GL_POSITION,lightpos);
 	glLightfv(GL_LIGHT0,GL_DIFFUSE,lightint);
 	glLightfv(GL_LIGHT0, GL_AMBIENT,  lightamb);
@@ -94,7 +82,7 @@ void teapot(void)
 	glColor3f(0.0,1.0,0.0);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glLoadIdentity();
+//	glLoadIdentity();
 	polygon(tp_screen[0],tp_screen[1],tp_screen[2],tp_screen[3]);
 	glPopMatrix();
 	glPushMatrix();

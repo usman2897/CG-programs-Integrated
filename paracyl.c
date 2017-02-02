@@ -2,7 +2,6 @@
 #include<GL/glut.h>
 #include<math.h>
 #include "ratio.h"
-#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
 int cyl_n=50,par_n=40;

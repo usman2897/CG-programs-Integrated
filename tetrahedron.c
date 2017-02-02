@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include<GL/glut.h>
 #include "ratio.h"
-#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
 typedef   float  tet_point[3];

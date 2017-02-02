@@ -7,7 +7,6 @@
 #include <string.h>
 #include <time.h>
 #include "ratio.h"
-#include "main.h"
 #define max(x, y) (((x) > (y)) ? (x) : (y))
 
 //external variables;
@@ -49,6 +48,8 @@ void draw_text(char* text,float x, float y);
 void drawNode(struct node *t_root,float x1,float y1,int level);
 void Write(char *string,int size);
 struct node* delete(struct node* r);
+void enablelight();
+void disablelight();
 
 //function Prototye
 void avl_help();
@@ -58,10 +59,7 @@ void avl_display();
 
 void init()
 {
-	glEnable(GL_LIGHT0);
-    glEnable(GL_NORMALIZE);
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_LIGHTING);
+	enablelight();
 	glClearColor(0.5,0.5,0.1,1.0);
     glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
@@ -124,6 +122,14 @@ int getBalance(struct node *N)
     return high(N->left) - high(N->right);
 }
 
+struct node * minValueNode(struct node* node)
+{
+    struct node* current = node;
+    /* loop down to find the leftmost leaf */
+    while (current->left != NULL)
+        current = current->left;
+    return current;
+}
 /* Function to Insert a node into the tree and perform balancing*/
 struct node* insert(struct node* node, int key)
 {
@@ -181,6 +187,101 @@ struct node* insert(struct node* node, int key)
     return node;
 }
 
+// Recursive function to delete a node with given key
+// from subtree with given root. It returns root of
+// the modified subtree.
+struct node* deleteNode(struct node* root1, int key)
+{
+    // STEP 1: PERFORM STANDARD BST DELETE
+ 
+    if (root1 == NULL)
+        return root1;
+ 
+    // If the key to be deleted is smaller than the
+    // root's key, then it lies in left subtree
+    if ( key < root1->key )
+        root1->left = deleteNode(root1->left, key);
+ 
+    // If the key to be deleted is greater than the
+    // root's key, then it lies in right subtree
+    else if( key > root1->key )
+        root1->right = deleteNode(root1->right, key);
+ 
+    // if key is same as root's key, then This is
+    // the node to be deleted
+    else
+    {
+        // node with only one child or no child
+        if( (root1->left == NULL) || (root1->right == NULL) )
+        {
+            struct node *temp = root1->left ? root1->left :
+                                             root1->right;
+ 
+            // No child case
+            if (temp == NULL)
+            {
+                temp = root1;
+                root1 = NULL;
+            }
+            else // One child case
+             *root1 = *temp; // Copy the contents of
+                            // the non-empty child
+            free(temp);
+        }
+        else
+        {
+            // node with two children: Get the inorder
+            // successor (smallest in the right subtree)
+            struct node* temp = minValueNode(root1->right);
+ 
+            // Copy the inorder successor's data to this node
+            root1->key = temp->key;
+ 
+            // Delete the inorder successor
+            root1->right = deleteNode(root1->right, temp->key);
+        }
+    }
+ 
+    // If the tree had only one node then return
+    if (root1 == NULL)
+      return root1;
+ 
+    // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
+    root1->height = 1 + max(high(root1->left),
+                           high(root1->right));
+ 
+    // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to
+    // check whether this node became unbalanced)
+    int balance = getBalance(root1);
+ 
+    // If this node becomes unbalanced, then there are 4 cases
+ 
+    // Left Left Case
+    if (balance > 1 && getBalance(root1->left) >= 0)
+        return rightRotate(root1);
+ 
+    // Left Right Case
+    if (balance > 1 && getBalance(root1->left) < 0)
+    {
+        root1->left =  leftRotate(root1->left);
+        return rightRotate(root1);
+    }
+ 
+    // Right Right Case
+    if (balance < -1 && getBalance(root1->right) <= 0)
+        return leftRotate(root1);
+ 
+    // Right Left Case
+    if (balance < -1 && getBalance(root1->right) > 0)
+    {
+        root1->right = rightRotate(root1->right);
+        return leftRotate(root1);
+    }
+ 
+    return root1;
+}
+
+
 void avl_display()
 {
 	if(!c){
@@ -202,14 +303,25 @@ void avl_display()
         glClearColor (0.8,0.9,0.3,1.0);
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
-        glTranslatef(0,10,-30);
-        glColor3f(1,1,1);
+        glTranslatef(0,8,-30);
+        glColor3f(0,0,0);
+        glPushMatrix();
+        disablelight();
+        glRasterPos2f(0,6);
+        Write("AVL Tree",2);
+        glColor3f(1.0,0.0,0.0);
+        glRasterPos2f(-20,4);
+        Write("Enter the Number,Then press 'z' to insert or 'd' to delete.",1);
+        glRasterPos2f(-20,3);
+        Write("Press 'x' to return to AVL Tree or Press 'b' to return to Main Menu",1);
+		enablelight();
+		glPopMatrix();
         drawNode(root,0,0,0);
         glutSwapBuffers();
     }
     if(page==2)
     {
-          glClearColor (0.3,0.8,0.9,1.0);
+        glClearColor (0.3,0.8,0.9,1.0);
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
         glTranslatef(0,10,-30);
@@ -366,10 +478,7 @@ void avl_back()
 	glOrtho(orthoCo[0],orthoCo[3],orthoCo[1],orthoCo[2],-100.0,100.0);
 	glMatrixMode(GL_MODELVIEW);
 	glClearColor(1.0,0.7,0.5,1.0);
-	glDisable(GL_LIGHT0);
-    glDisable(GL_NORMALIZE);
-    glDisable(GL_COLOR_MATERIAL);
-    glDisable(GL_LIGHTING);
+	disablelight();
 	glutPostRedisplay();
 	page=0;c=0;
 	root=delete(root);
@@ -421,6 +530,10 @@ void avl_keyboard(unsigned char key,int x,int y)
                 avl_display();
                 result=0;
                 break;
+            case 'd': root=deleteNode(root,result);
+            	usleep(5);
+            	avl_display();
+            	result=0;break;
             case 'x':
                page=0;
                root=delete(root);

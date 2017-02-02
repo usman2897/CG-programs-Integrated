@@ -6,6 +6,7 @@ void myReshape(int,int);
 outcode ComputeOutCode (double x, double y);
 void keyboard(unsigned char c,int x,int y);
 void mouse(int button,int status,int x,int y);
+void menu(int);
 void Write(char *string,int size);
 
 //tetrahedron
@@ -60,8 +61,7 @@ void avl_display();
 void avl_myReshape (int , int);
 void avl_keyboard(unsigned char,int,int);
 
-//icons
-void cube();
+//Icon
 void teapot();
 void tetrahedron(int tet_n);
 void home();

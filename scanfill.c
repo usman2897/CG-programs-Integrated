@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include<GL/glut.h>
 #include "ratio.h"
-#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 GLfloat sf_screen[4]={-30,0,20,-10};
 

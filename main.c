@@ -6,7 +6,7 @@
 
 int count=0;
 GLfloat orthoCo[4]={-100.0,-100.0,100.0,60.0};
-int width=800,height=600;
+int width=800,height=600,m;
 float xratio;
 float yratio;
 
@@ -39,13 +39,12 @@ void myinit()
 void polygon(GLfloat a,GLfloat b,GLfloat c,GLfloat d)
 {
 	glBegin(GL_POLYGON);
-	  glVertex3f(a,b,-100.0);
-	  glVertex3f(a,c,-100.0);
-	  glVertex3f(d,c,-100.0);
-	  glVertex3f(d,b,-100.0);
+	  glVertex3f(a,b,-99.0);
+	  glVertex3f(a,c,-99.0);
+	  glVertex3f(d,c,-99.0);
+	  glVertex3f(d,b,-99.0);
 	glEnd();
 }
-
 
 void display()
 {
@@ -54,6 +53,7 @@ void display()
 		cal_ratio(orthoCo);
 	}
 	cube();
+	//glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	teapot();
 	tetrahedron(tet_n);
 	home();
@@ -74,7 +74,7 @@ void display()
 	glRasterPos2f(-20,-70);
 	Write("5th Sem CSE",2);
 	glRasterPos2f(-20,-80);
-	Write("Under the Guidance of VIMALA Mam",2);
+	Write("Under the Guidance of VIMALA Ma'am",2);
 	count++;
 	if(count>30000)count=1;
 	glFlush();
@@ -115,7 +115,7 @@ void mouse(int button,int status,int x,int y)
 		animation(tet_screen);
 		glutMouseFunc(0);
 		glutReshapeFunc(tet_myReshape);
-		printf("Enter the No. of Recursions ofr Tetrahedron: ");
+		printf("Enter the No. of Recursions of Tetrahedron: ");
 		scanf("%d",&tet_n);
 	}
 	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(house_screen[0]-orthoCo[0])&&x<=xratio*(house_screen[3]-orthoCo[0]))&&(y>=yratio*(house_screen[1]-orthoCo[1])&&y<=yratio*(house_screen[2]-orthoCo[1])))
@@ -159,10 +159,7 @@ void mouse(int button,int status,int x,int y)
 	}
 	else if(button==GLUT_LEFT_BUTTON&&(x>=xratio*(cbv_screen[0]-orthoCo[0])&&x<=xratio*(cbv_screen[3]-orthoCo[0]))&&(y>=yratio*(cbv_screen[1]-orthoCo[1])&&y<=yratio*(cbv_screen[2]-orthoCo[1])))
 	{
-		//animation(cbv_screen);
-		glMatrixMode(GL_PROJECTION);
-		//glLoadIdentity();
-		glFrustum(cbv_screen[0],cbv_screen[3],cbv_screen[1],cbv_screen[2],-100.0,100.0);
+		animation(cbv_screen);
 		glutMouseFunc(ccube_mouse);
 		glutReshapeFunc(cbv_myReshape);
 		glutKeyboardFunc(ccube_keys);
@@ -192,7 +189,7 @@ void keyboard(unsigned char c,int x,int y)
 		glutMouseFunc(mouse);
 		glutReshapeFunc(myReshape);
 	}
-	else exit(0);
+	else if(c=='q') exit(0);
 }
 void myReshape(int w,int h)
 {

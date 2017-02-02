@@ -7,7 +7,6 @@
 #include <string.h>
 #include <time.h>
 #include "ratio.h"
-#include "main.h"
 
 //declarations
 void polygon(GLfloat a,GLfloat b,GLfloat c,GLfloat d);
@@ -37,6 +36,22 @@ struct node
 void drawNode(struct node* t_root,float x1,float y1,int level);
 
 struct node *icon,*current=NULL;
+
+void enablelight()
+{
+	glEnable(GL_LIGHT0);
+    glEnable(GL_NORMALIZE);
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_LIGHTING);
+}
+
+void disablelight()
+{
+	glDisable(GL_LIGHT0);
+    glDisable(GL_NORMALIZE);
+    glDisable(GL_COLOR_MATERIAL);
+    glDisable(GL_LIGHTING);
+}
 struct node* newNode(int key)
 {
     struct node* node = (struct node *)
@@ -51,12 +66,7 @@ struct node* newNode(int key)
 void createIcon()
 {
 	glEnable(GL_DEPTH_TEST);
-
-    glEnable(GL_LIGHT0);
-    glEnable(GL_NORMALIZE);
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_LIGHTING);
-
+	enablelight();
     glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
@@ -79,10 +89,7 @@ void createIcon()
 	glTranslated(-1,-30,0);
 	drawNode(icon,10,50,0);
 	glPopMatrix();
-	glDisable(GL_LIGHT0);
-    glDisable(GL_NORMALIZE);
-    glDisable(GL_COLOR_MATERIAL);
-    glDisable(GL_LIGHTING);
+	disablelight();
     left_angle=245;
     right_angle=115;
 	if(count%10) glColor3fv(avl_color[(count/10)%2]);

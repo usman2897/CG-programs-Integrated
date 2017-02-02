@@ -2,7 +2,6 @@
 #include<GL/glut.h>
 #include<math.h>
 #include "ratio.h"
-#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
 GLfloat house[3][9]={ {10.0,10.0,17.5,25.0,25.0,15.0,15.0,20.0,20.0},

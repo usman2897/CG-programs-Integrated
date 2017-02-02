@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include<GL/glut.h>
 #include "ratio.h"
-#include "main.h"
 #define   mesh_maxx 20
 #define   mesh_maxy 25
 #define   mesh_dx 15

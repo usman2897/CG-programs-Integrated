@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include<GL/glut.h>
 #include "ratio.h"
-#include "main.h"
 void polygon(GLfloat,GLfloat,GLfloat,GLfloat);
 
 //main
@@ -46,7 +45,7 @@ void ccube_keys(unsigned char key, int x, int y)
 			glutKeyboardFunc(keyboard);
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			glOrtho(orthoCo[0],orthoCo[3],orthoCo[1],orthoCo[2],-1000.0,1000.0);
+			glOrtho(orthoCo[0],orthoCo[3],orthoCo[1],orthoCo[2],-100.0,100.0);
 		}
 		glutPostRedisplay();
 }
